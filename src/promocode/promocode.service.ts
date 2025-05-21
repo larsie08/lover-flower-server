@@ -14,7 +14,7 @@ export class PromocodeService {
     return await this.promocodeRepository.save(createPromocodeDto);
   }
 
-  async findOne(promo: string) {
+  async findOne(promo: string): Promise<Promocode> {
     const promocode = await this.promocodeRepository.findOne({
       where: { promoName: promo },
     });

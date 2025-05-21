@@ -30,20 +30,4 @@ export class ReviewService {
 
     return this.reviewRepository.save(review);
   }
-
-  // findAll() {
-  //   return `This action returns all review`;
-  // }
-
-  // findOne(id: number) {
-  //   return;
-  // }
-
-  // update(id: number, updateReviewDto: UpdateReviewDto) {
-  //   return `This action updates a #${id} review`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} review`;
-  // }
 }

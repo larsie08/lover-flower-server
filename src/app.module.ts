@@ -7,7 +7,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { BouquetsModule } from './bouquets/bouquets.module';
 import { ReviewModule } from './review/review.module';
 import { PromocodeModule } from './promocode/promocode.module';
-import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -30,7 +29,6 @@ import { EmailModule } from './email/email.module';
     BouquetsModule,
     ReviewModule,
     PromocodeModule,
-    EmailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

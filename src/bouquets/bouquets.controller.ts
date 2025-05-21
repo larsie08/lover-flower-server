@@ -1,6 +1,8 @@
-import { Controller, Get, Post, Body, Param, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Query, Delete, Patch } from '@nestjs/common';
 import { BouquetsService } from './bouquets.service';
+
 import { CreateBouquetDto } from './dto/create-bouquet.dto';
+import { UpdateBouquetDto } from './dto/update-bouquet.dto';
 
 @Controller('bouquets')
 export class BouquetsController {
@@ -35,13 +37,13 @@ export class BouquetsController {
     return this.bouquetsService.findSearch(searchValue);
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateBouquetDto: UpdateBouquetDto) {
-  //   return this.bouquetsService.update(+id, updateBouquetDto);
-  // }
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateBouquetDto: UpdateBouquetDto) {
+    return this.bouquetsService.update(+id, updateBouquetDto);
+  }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.bouquetsService.remove(+id);
-  // }
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.bouquetsService.remove(+id);
+  }
 }

@@ -1,5 +1,5 @@
-import { Review } from 'src/review/entities/review.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Review } from 'src/review/entities/review.entity';
 
 @Entity()
 export class Bouquet {
@@ -9,7 +9,7 @@ export class Bouquet {
   @Column()
   name: string;
 
-  @Column()
+  @Column('decimal')
   cost: number;
 
   @Column()
@@ -18,33 +18,15 @@ export class Bouquet {
   @Column()
   rating: number;
 
-  @Column('simple-json')
-  categories: {
-    category1?: string;
-    category2?: string;
-    category3?: string;
-    category4?: string;
-    category5?: string;
-  };
+  @Column('jsonb', { default: [] })
+  categories: string[];
 
-  @Column('simple-json')
+  @Column('jsonb', { nullable: true })
   filters: {
     lighting: string;
-    colors: {
-      color1?: string;
-      color2?: string;
-      color3?: string;
-    };
-    format: {
-      format1?: string;
-      format2?: string;
-      format3?: string;
-    };
-    flowers: {
-      flower1?: string;
-      flower2?: string;
-      flower3?: string;
-    };
+    colors: string[];
+    format: string[];
+    flowers: string[];
   };
 
   @OneToMany(() => Review, (review) => review.bouquet)

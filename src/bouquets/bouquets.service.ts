@@ -1,8 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateBouquetDto } from './dto/create-bouquet.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
 import { Bouquet } from './entities/bouquet.entity';
+
+import { CreateBouquetDto } from './dto/create-bouquet.dto';
+import { UpdateBouquetDto } from './dto/update-bouquet.dto';
 
 @Injectable()
 export class BouquetsService {
@@ -21,7 +24,7 @@ export class BouquetsService {
     minPriceValue: string;
     maxPriceValue: string;
     filters: string[];
-  }) {
+  }): Promise<Bouquet[]> {
     const sorters = {
       rating: (a: Bouquet, b: Bouquet) => b.rating - a.rating,
       name: (a: Bouquet, b: Bouquet) => a.name.localeCompare(b.name),
@@ -54,8 +57,8 @@ export class BouquetsService {
     return [...filteredBouquets].sort(sorters[sortBy]);
   }
 
-  async findOne(id: number) {
-    return this.bouquetRepositore.findOne({
+  async findOne(id: number): Promise<Bouquet> {
+    const bouquet = await this.bouquetRepositore.findOne({
       where: {
         id,
       },
@@ -63,9 +66,13 @@ export class BouquetsService {
         reviews: true,
       },
     });
+
+    if (!bouquet) throw new NotFoundException('Не найден необходимый букет');
+
+    return bouquet;
   }
 
-  async findSearch(searchValue: string) {
+  async findSearch(searchValue: string): Promise<Bouquet[]> {
     const bouquets = await this.bouquetRepositore.find();
 
     const regExp = new RegExp(`${searchValue}`, 'gi');
@@ -84,13 +91,21 @@ export class BouquetsService {
     return searchResult;
   }
 
-  // update(id: number, updateBouquetDto: UpdateBouquetDto) {
-  //   return `This action updates a #${id} bouquet`;
-  // }
+  async update(id: number, updateBouquetDto: UpdateBouquetDto) {
+    const bouquet = await this.bouquetRepositore.find({ where: { id } });
 
-  // remove(id: number) {
-  //   return `This action removes a #${id} bouquet`;
-  // }
+    if (!bouquet) throw new NotFoundException('Не найден необходимый букет');
+
+    return await this.bouquetRepositore.update(id, updateBouquetDto);
+  }
+
+  async remove(id: number) {
+    const bouquet = await this.bouquetRepositore.find({ where: { id } });
+
+    if (!bouquet) throw new NotFoundException('Не найден необходимый букет');
+
+    return await this.bouquetRepositore.delete(id);
+  }
 }
 
 function filterBouquets(
@@ -111,16 +126,14 @@ function filterBouquets(
 
     return (
       filtersIds.includes(filters.lighting) ||
-      Object.values(filters.colors).some((id) => filtersIds.includes(id)) ||
-      Object.values(filters.format).some((id) => filtersIds.includes(id)) ||
-      Object.values(filters.flowers).some((id) => filtersIds.includes(id))
+      filters.colors.some((id) => filtersIds.includes(id)) ||
+      filters.format.some((id) => filtersIds.includes(id)) ||
+      filters.flowers.some((id) => filtersIds.includes(id))
     );
   };
 
   const filteredByCategory = category
-    ? bouquets.filter((b) =>
-        Object.values(b.categories || {}).includes(category),
-      )
+    ? bouquets.filter((b) => (b.categories || []).includes(category))
     : bouquets;
 
   if (!filteredByCategory) return [];
